@@ -4,7 +4,21 @@ require 'bundler'
 Bundler.require
 require_relative './webapp/tabula_settings.rb'
 require_relative './webapp/tabula_web.rb'
-run Cuba
+
+potential_root_uri_without_slashes = (defined?($servlet_context) ? $servlet_context.getContextPath : ENV["ROOT_URI"])
+
+if potential_root_uri_without_slashes.nil? || potential_root_uri_without_slashes == ''
+  ROOT_URI = '/'
+else
+  ROOT_URI = (potential_root_uri_without_slashes[0] == "/" ? '' : '/') + potential_root_uri_without_slashes +  (potential_root_uri_without_slashes[-1] == "/" ? '' : '/')
+end
+
+puts "running under #{ROOT_URI} as root URI" 
+
+
+map ROOT_URI do 
+  run Cuba
+end
 
 if "#{$PROGRAM_NAME}".include?("tabula.jar")
   # only do this if running as jar or app. (if "rackup", we don't
@@ -27,14 +41,21 @@ if "#{$PROGRAM_NAME}".include?("tabula.jar")
   uri = java.net.URI.new(url)
   sleep 0.5
 
+  puts "should we open browser?"
+  puts "java.lang.Boolean.getBoolean('tabula.openBrowser'): #{java.lang.Boolean.getBoolean('tabula.openBrowser')}"
   have_desktop = false
-  if java.awt.Desktop.isDesktopSupported
-    begin
-      desktop = java.awt.Desktop.getDesktop()
-    rescue
-      desktop = nil
-    else
-      have_desktop = true
+  if java.lang.Boolean.getBoolean('tabula.openBrowser')
+    puts "java.awt.Desktop.isDesktopSupported: #{java.awt.Desktop.isDesktopSupported}"
+    if java.awt.Desktop.isDesktopSupported
+      begin
+        desktop = java.awt.Desktop.getDesktop()
+      rescue
+        puts "java.awt.Desktop.getDesktop(): no"
+        desktop = nil
+      else
+        puts "java.awt.Desktop.getDesktop(): yes"
+        have_desktop = true
+      end
     end
   end
 
@@ -43,12 +64,20 @@ if "#{$PROGRAM_NAME}".include?("tabula.jar")
   if have_desktop
     puts "\n======================================================"
     puts "Launching web browser to #{url}\n\n"
-    puts "If it does not open in 10 seconds, you may manually open"
-    puts "a web browser to the above URL."
+
+    begin
+      desktop.browse(uri)
+    rescue
+      puts "Unable to launch your web browser, you will have to"
+      puts "manually open it to the above URL."
+    else
+      puts "If it does not open in 10 seconds, you may manually open"
+      puts "a web browser to the above URL."
+    end
+
     puts "When you're done using the Tabula interface, you may"
     puts "return to this window and press \"Control-C\" to close it."
     puts "======================================================\n\n"
-    desktop.browse(uri)
   else
     puts "\n======================================================"
     puts "Server now listening at: #{url}\n\n"

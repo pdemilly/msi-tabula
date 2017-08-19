@@ -4,10 +4,12 @@
 
 ---
 
+
+
 # Tabula
 
-[tabula `master`](https://github.com/tabulapdf/tabula/tree/master) [![Build Status](https://travis-ci.org/tabulapdf/tabula.svg?branch=master)](https://travis-ci.org/tabulapdf/tabula)  
-
+[tabula `master`](https://github.com/tabulapdf/tabula/tree/master)
+[![Build Status](https://travis-ci.org/tabulapdf/tabula.svg?branch=master)](https://travis-ci.org/tabulapdf/tabula)  
 
 Tabula helps you liberate data tables trapped inside PDF files.
 
@@ -18,12 +20,24 @@ Tabula helps you liberate data tables trapped inside PDF files.
 © 2012-2016 Manuel Aristarán. Available under MIT License. See
 [`AUTHORS.md`](AUTHORS.md) and [`LICENSE.md`](LICENSE.md).
 
+-   [Why Tabula?](#why-tabula)
+-   [Using Tabula](#using-tabula)
+-   [Known issues](#known-issues)
+-   [Incorporating Tabula into your own
+    project](#incorporating-tabula-into-your-own-project)
+-   [Running Tabula from source
+    (for developers)](#running-tabula-from-source-for-developers)
+    -   [Building a packaged application
+        version](#building-a-packaged-application-version)
+-   [Contributing](#contributing)
+    -   [Backers](#backers)
+
 ## Why Tabula?
 
 If you’ve ever tried to do anything with data provided to you in PDFs, you
 know how painful this is — you can’t easily copy-and-paste rows of data out
 of PDF files. Tabula allows you to extract that data in CSV format, through
-a simple web interface ([Check out this short screencast](https://erika.makes.org/popcorn/16ll))
+a simple web interface.
 
 **Caveat**: Tabula only works on text-based PDFs, not scanned documents. If you can click-and-drag to select text in your table in a PDF viewer (even if the output is disorganized trash), then your PDF is text-based and Tabula should work.
 
@@ -33,7 +47,7 @@ a simple web interface ([Check out this short screencast](https://erika.makes.or
 
 First, make sure you have a recent copy of Java installed. You can
 [download Java here][jre_download]. Tabula requires
-a Java Runtime Environment compatible with Java 6 or Java 7.
+a Java Runtime Environment compatible with Java 7 (i.e. Java 7, 8 or higher).
 If you have a problem, check [Known Issues](#knownissues) first, then [report an issue](http://www.github.com/tabulapdf/tabula/issues).
 
 * ### Windows
@@ -45,7 +59,7 @@ If you have a problem, check [Known Issues](#knownissues) first, then [report an
   To close Tabula, just go back to the console window and press "Control-C"
   (as if to copy).
 
-* ###Mac OS X
+* ### Mac OS X
   Download `tabula-mac.zip` from [the download site][tabula_dl]. Unzip and open
   the Tabula app inside. A browser should automatically open
   to http://127.0.0.1:8080/ . If not, open your web browser of choice and
@@ -56,12 +70,21 @@ If you have a problem, check [Known Issues](#knownissues) first, then [report an
 
   Note: If you’re running Mac OS X 10.8 or later, you might get an error like "Tabula is damaged and can't be opened." We're working on fixing this, but click [here](#gatekeeper) for a workaround.
 
-* ###Other platforms (e.g. Linux)
+* ### Other platforms (e.g. Linux)
   Download `tabula-jar.zip` from [the download site][tabula_dl] and unzip it
   to the directory of your choice. Open a terminal window, and `cd` to inside
   the `tabula` directory you just unzipped. Then run:
 
   `java -Dfile.encoding=utf-8 -Xms256M -Xmx1024M -jar tabula.jar`
+
+  Then manually navigate your browser to http://127.0.0.1:8080/ (New in
+  Tabula 1.1. To go back to the old behavior that automatically launches
+  your web browser, use the `-Dtabula.openBrowser=true` option.
+
+  Tabula binds to port 8080 by default. You can change it with the `warbler.port` option; for example, to use port 9999:
+
+  `java -Dfile.encoding=utf-8 -Xms256M -Xmx1024M -Dwarbler.port=9999 -jar tabula.jar`
+
 
 If the program fails to run, double-check that you have [Java installed][jre_download]
 and then try again.
@@ -69,9 +92,6 @@ and then try again.
 [jre_download]: https://www.java.com/download/
 [tabula_dl]: http://tabula.technology
 
-Tabula binds to port 8080 by default. You can change it with the `warbler.port` property:
-
-`java -Dfile.encoding=utf-8 -Xms256M -Xmx1024M -Dwarbler.port=9999 -jar tabula.jar`
 
 
 ## <a name="knownissues">Known issues</a>
@@ -102,7 +122,7 @@ There are some bugs that we're aware of that we haven't managed to fix yet. If t
   4. Run Tabula by typing `tabula.exe`
 
 * <a name='portproblems'>**A browser tab opens, but something other than Tabula loads there. Or Tabula doesn't start.**</a>
-  It's possible another program is using port 8080, whichh Tabula binds to by default. You can try closing the other program, or change the port Tabula uses by running Tabula from the terminal with the `warbler.port` property:
+  It's possible another program is using port 8080, which Tabula binds to by default. You can try closing the other program, or change the port Tabula uses by running Tabula from the terminal with the `warbler.port` property:
 
   `java -Dfile.encoding=utf-8 -Xms256M -Xmx1024M -Dwarbler.port=9999 -jar tabula.jar`
 
@@ -110,12 +130,22 @@ There are some bugs that we're aware of that we haven't managed to fix yet. If t
 
 Tabula is open-source, so we'd love for you to incorporate pieces of Tabula into your own projects. The "guts" of Tabula -- that is, the logic and heuristics that reconstruct tables from PDFs -- is contained in the [tabula-java](https://github.com/tabulapdf/tabula-java/) repo. There's a JAR file that you can easily incorporate into JVM languages like Java, Scala or Clojure and it includes a command-line tool for you to automate your extraction tasks. Visit that repo for more information on how to use `tabula-java` on the CLI and on how Tabula exports `tabula-java` scripts.
 
-[tabula-extractor](https://github.com/tabulapdf/tabula-extractor/) contains JRuby bindings for tabula-java. If you end up writing bindings for another language (Python, in particular!), let us know and we'll add a link here.
+### Bindings:
+
+Tabula has bindings for JRuby and R. If you end up writing bindings for another language, let us know and we'll add a link here.
+
+ - [tabulizer](https://github.com/leeper/tabulizer) provides [R](https://www.r-project.org/) bindings for tabula-java and is community-supported by @leeper.
+ - [tabula-js](https://github.com/ezodude/tabula-js) provides [Node.js](https://nodejs.org/en/) bindings for tabula-java; it is community-supported by @ezodude.
+ - [tabula-py](https://github.com/chezou/tabula-py) provides [Python](https://python.org) bindings for tabula-java; it is community-supported by @chezou.
+ - [tabula-extractor](https://github.com/tabulapdf/tabula-extractor/) *DEPRECATED* - Provides JRuby bindings for tabula-java 
+
+
+
 
 ## Running Tabula from source (for developers)
 
 1. Download JRuby. You can install it from its website, or using tools like
-   `rvm` or `rbenv`
+   `rvm` or `rbenv`. Note that as of Tabula 1.1.0 (7875582becb2799b65586d5680782cafd399bb33), Tabula uses the JRuby 9000 series (i.e. JRuby 9.1.5.0).
 
 2. Download Tabula and install the Ruby dependencies. (Note: if using `rvm` or
    `rbenv`, ensure that JRuby is being used.
@@ -125,13 +155,13 @@ Tabula is open-source, so we'd love for you to incorporate pieces of Tabula into
     cd tabula
 
     gem install bundler
-    gem install tabula-extractor
     bundle install
+    jruby -S jbundle install
     ~~~
 
 **Then, start the development server:**
 
-    bundle exec rackup
+    jruby -G -r jbundler -S rackup
 
 (If you get encoding errors, set the `JAVA_OPTS` environment variable to `-Dfile.encoding=utf-8`)
 
@@ -141,7 +171,7 @@ You can a couple some options when executing the server in this manner:
 
     TABULA_DATA_DIR="/tmp/tabula" \
     TABULA_DEBUG=1 \
-    bundle exec rackup
+    jruby -G -r jbundler -S rackup
 
 * `TABULA_DATA_DIR` controls where uploaded data for Tabula is stored. By default,
   data is stored in the OS-dependent application data directory for the current
@@ -155,8 +185,15 @@ You can a couple some options when executing the server in this manner:
 Testing in this manner will be closer to testing the "packaged application"
 version of the app.
 
-    bundle exec rake war
+    jruby -G -S rake war
     java -Dfile.encoding=utf-8 -Xms256M -Xmx1024M -jar build/tabula.jar
+    
+
+If you intend to develop against an unreleased version of [`tabula-java`](https://github.com/tabulapdf/tabula-java), you need to install its JAR to your local Maven repository. From the directory that contains `tabula-java` source:
+
+    mvn install:install-file -Dfile=target/tabula-<version>-SNAPSHOT.jar -DgroupId=technology.tabula -DartifactId=tabula -Dversion=<version>-SNAPSHOT -Dpackaging=jar -DpomFile=pom.xml
+    
+Then, adjust the `Jarfile` accordingly.
 
 ### Building a packaged application version
 
@@ -237,3 +274,21 @@ You can help by:
 - Adding or editing documentation.
 - Contributing code via a Pull Request from ideas or bugs listed in the [Enhancements](https://github.com/tabulapdf/tabula/labels/enhancement) section of the issues. [see `CONTRIBUTING.md`](CONTRIBUTING.md)
 - Spreading the word about Tabula to people who might be able to benefit from using it.
+
+### Backers
+
+You can also support our continued work on Tabula with a one-time or monthly donation [on OpenCollective](https://opencollective.com/tabulapdf#support). Organizations who use Tabula can also [sponsor the project](https://opencollective.com/tabulapdf#support) for acknolwedgement on [our official site](http://tabula.technology/) and this README.
+
+Tabula is made possible in part through <a href="https://opencollective.com/tabulapdf">the generosity of our users</a> and through grants from the <a href="http://www.knightfoundation.org/">Knight Foundation</a> and the <a href="https://shuttleworthfoundation.org/">Shuttleworth Foundation</a>. Special thanks to all the users and organizations that support Tabula!
+
+<a href="https://opencollective.com/tabulapdf/backer/0/website" target="_blank"><img src="https://opencollective.com/tabulapdf/backer/0/avatar"></a>
+<a href="https://opencollective.com/tabulapdf/backer/1/website" target="_blank"><img src="https://opencollective.com/tabulapdf/backer/1/avatar"></a>
+<a href="https://opencollective.com/tabulapdf/backer/2/website" target="_blank"><img src="https://opencollective.com/tabulapdf/backer/2/avatar"></a>
+<a href="https://opencollective.com/tabulapdf/backer/3/website" target="_blank"><img src="https://opencollective.com/tabulapdf/backer/3/avatar"></a>
+<a href="https://opencollective.com/tabulapdf/backer/4/website" target="_blank"><img src="https://opencollective.com/tabulapdf/backer/4/avatar"></a>
+<a href="https://opencollective.com/tabulapdf/backer/5/website" target="_blank"><img src="https://opencollective.com/tabulapdf/backer/5/avatar"></a>
+
+<a title="The John S. and James L. Knight Foundation" href="http://www.knightfoundation.org/" target="_blank"><img width="220" alt="The John S. and James L. Knight Foundation" src="http://www.knightfoundation.org/media/uploads/media_images/knight-logo-300.jpg"></a>
+<a title="The Shuttleworth Foundation" href="https://shuttleworthfoundation.org/" target="_blank"><img width="200" alt="The Shuttleworth Foundation" src="https://raw.githubusercontent.com/tabulapdf/tabula/gh-pages/shuttleworth.jpg"></a>
+
+More acknowledgments can be found in [`AUTHORS.md`](AUTHORS.md).
